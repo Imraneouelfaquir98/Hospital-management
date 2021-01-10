@@ -7,10 +7,45 @@ import jade.lang.acl.ACLMessage;
 import java.util.*; 
 
 
+
+import javax.swing.*; 
+import java.awt.*; 
+import java.awt.event.*; 
+
+
 import java.time.LocalDateTime; // Import the LocalDateTime class
 import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public class Server extends Agent {
+
+	private class MyFrame 
+		extends JFrame { 
+	    public JLabel res;
+	    private Container c; 
+
+	    	public MyFrame() 
+			{ 
+				setTitle("Server Agent"); 
+				setBounds(0, 600, 300, 600); 
+				setDefaultCloseOperation(EXIT_ON_CLOSE); 
+				setResizable(false); 
+		
+				c = getContentPane(); 
+				c.setLayout(null); 
+
+		        // Frame Title 
+		        res = new JLabel("Test"); 
+				res.setFont(new Font("Arial", Font.PLAIN, 20)); 
+				res.setSize(300, 600); 
+				res.setLocation(100, 500); 
+				c.add(res); 
+
+				
+				setVisible(true); 
+			}
+	}
+	MyFrame f = new MyFrame();
+
 	private int id = 1;
 
 	protected void setup() 
@@ -19,6 +54,8 @@ public class Server extends Agent {
 		System.out.println("---------------------------------------");
 		System.out.println("-----------------Server/DataBase/Planification---------------");
 		System.out.println("---------------------------------------");
+
+		// TODO : inialise SQL database for all type patients/Visitors/...
 
 		FSMBehaviour agent_beh = new FSMBehaviour();
 
@@ -64,25 +101,38 @@ public class Server extends Agent {
 	        }
 
 	        map.forEach((key, value) -> System.out.println("Server>>"+key + ":" + value));
-
+	        // TODO : add the map infos in the database
 
 			// Responce the reception & the doctor/nuercery by the id of the patient and the doctor
 
 			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
 
+
 			message.addReceiver(messageRecu.getSender());
-			// if(map.get("Service").equals("Consulting"))
-			message.addReceiver(new AID("consulting", AID.ISLOCALNAME)); 
-			// if(map.get("Service").equals("Nursery"))
-			message.addReceiver(new AID("nursery", AID.ISLOCALNAME)); 
+
+			if(map.get("Service").equals("Consulting"))
+			{
+				message.addReceiver(new AID("consulting", AID.ISLOCALNAME)); 
+				message.setContent("ID@" + String.valueOf(id)+"#Service@"+"ConsultingRoom");
+			}
+
+			if(map.get("Service").equals("Nursery"))
+			{
+				message.addReceiver(new AID("nursery", AID.ISLOCALNAME));
+				message.setContent("ID@" + String.valueOf(id)+"#Service@"+"NurseryRoom");
+			}
+
+			if(map.get("Service").equals("Visitor"))
+			{
+				// TODO
+				// get status of patient X from database created bu assis
+				// input : name of patient
+				// output : status
+				String status = "ROOM:12"; // Or "Impossible:Reason"
+				message.addReceiver(new AID("ward", AID.ISLOCALNAME));
+			}
 
 
-			LocalDateTime myDateObj = LocalDateTime.now();
-		    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-			String formattedDate = myDateObj.format(myFormatObj);
-
-
-			message.setContent("ID@" + String.valueOf(id) + "@@TIMEIN@"+formattedDate);
 
 			send(message);
 
