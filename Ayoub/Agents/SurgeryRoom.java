@@ -1,3 +1,6 @@
+package Agents;
+
+import Agents.Surgery;
 import jade.core.Agent;
 
 import java.util.LinkedList;
