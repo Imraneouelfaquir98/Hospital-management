@@ -64,8 +64,8 @@ public class Reception extends Agent {
 				"2015", "2016", "2017", "2018", 
 				"2019" }; 
 
-		private String services[] 
-			= { "Consulting", "Nursery"}; 
+		private String services[]
+			= { "Consulting", "Nursery","Visitor"};
 		// constructor, to initialize the components 
 		// with default values. 
 		public MyFrame() 

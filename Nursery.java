@@ -5,7 +5,44 @@ import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 
+
+import javax.swing.*; 
+import java.awt.*; 
+import java.awt.event.*; 
+
+
+
 public class Nursery extends Agent {
+
+	private class MyFrame 
+		extends JFrame { 
+	    public JLabel res;
+	    
+	    
+	    private Container c; 
+
+	    	public MyFrame() 
+			{ 
+				setTitle("Nursery Agent"); 
+				setBounds(0, 300, 300, 600); 
+				setDefaultCloseOperation(EXIT_ON_CLOSE); 
+				setResizable(false); 
+		
+				c = getContentPane(); 
+				c.setLayout(null); 
+
+		        // Frame Title 
+		        res = new JLabel("Test"); 
+				res.setFont(new Font("Arial", Font.PLAIN, 20)); 
+				res.setSize(300, 600); 
+				res.setLocation(100, 500); 
+				c.add(res); 
+
+				
+				setVisible(true); 
+			}
+	}
+	MyFrame f = new MyFrame();
 
 	protected void setup() 
 	{
