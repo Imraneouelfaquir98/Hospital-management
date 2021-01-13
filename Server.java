@@ -16,8 +16,13 @@ import java.awt.event.*;
 import java.time.LocalDateTime; // Import the LocalDateTime class
 import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
-public class Server extends Agent {
 
+import java.sql. * ;
+
+public class Server extends Agent {
+	Connection myconnection;
+	Statement mystatement;
+	ResultSet myresultset;
 	private class MyFrame 
 		extends JFrame { 
 	    public JLabel res;
@@ -89,16 +94,84 @@ public class Server extends Agent {
 			System.out.println(messageRecu.getContent());
 
 			String str = messageRecu.getContent(); 
-	        String[] arrOfStr = str.split("#", 7); 
+	        String[] arrOfStr = str.split(",", 9); 
 
 	  		Map<String, String> map = new HashMap<String, String>();
 
 	        for (String a : arrOfStr) 
 	        {
 	            // System.out.println("Server>>"+a); 
-	            String[] tmp = a.split("@", 2); 
+	            String[] tmp = a.split(":", 2); 
 	            map.put(tmp[0],tmp[1]);
 	        }
+
+	        ////// NEW
+
+	         try {
+	            String dbUrl = "jdbc:mysql://localhost:3306/ok";
+	            String username = "user";
+	            String password = "P@ssW0rd";
+	            Class.forName("com.mysql.jdbc.Driver");
+
+
+	            myconnection = DriverManager.getConnection(dbUrl, username, password);
+	            System.out.println("Connected");
+
+		        if(map.get("service").equals("Visitor"))
+				{
+					PreparedStatement pstmt = myconnection.prepareStatement(
+		               "INSERT INTO patients (id,name,cin,mobile,gender,dob,service,email,address,name2) VALUES(?,?,?,?,?,?,?,?,?,?)");
+		            pstmt.setInt(1, id); // set parameter 1 (FIRST_NAME)
+		            pstmt.setString(2, map.get("name"));
+		            pstmt.setString(3, map.get("cin"));
+		            pstmt.setString(4, map.get("mobile"));
+		            pstmt.setString(5, map.get("gender"));
+		            pstmt.setString(6, map.get("dob"));
+		            pstmt.setString(7, map.get("service"));
+		            pstmt.setString(8, map.get("email"));
+		            pstmt.setString(9, map.get("address"));
+		            pstmt.setString(10, map.get("name2"));
+
+		            int rows = pstmt.executeUpdate(); 
+				}
+				else
+				{
+		            PreparedStatement pstmt = myconnection.prepareStatement(
+		               "INSERT INTO patients (id,name,cin,mobile,gender,dob,service,email,address) VALUES(?,?,?,?,?,?,?,?,?)");
+		            pstmt.setInt(1, id); // set parameter 1 (FIRST_NAME)
+		            pstmt.setString(2, map.get("name"));
+		            pstmt.setString(3, map.get("cin"));
+		            pstmt.setString(4, map.get("mobile"));
+		            pstmt.setString(5, map.get("gender"));
+		            pstmt.setString(6, map.get("dob"));
+		            pstmt.setString(7, map.get("service"));
+		            pstmt.setString(8, map.get("email"));
+		            pstmt.setString(9, map.get("address"));
+		            
+	            	int rows = pstmt.executeUpdate(); 
+
+				}
+
+
+
+
+	            mystatement = myconnection.createStatement();
+	            myresultset = mystatement.executeQuery("select * from patients");
+
+	            while (myresultset.next()) {
+	                System.out.println(" ID : " + myresultset.getString("id"));
+	                System.out.println(" name : " + myresultset.getString("name"));
+	                System.out.println(" email : " + myresultset.getString("email") );
+	            }
+	        } catch(Exception e) {
+	            System.out.println(e);
+	        }
+
+
+
+	        ////// 
+
+
 
 	        map.forEach((key, value) -> System.out.println("Server>>"+key + ":" + value));
 	        // TODO : add the map infos in the database
@@ -110,26 +183,55 @@ public class Server extends Agent {
 
 			message.addReceiver(messageRecu.getSender());
 
-			if(map.get("Service").equals("Consulting"))
+			if(map.get("service").equals("Consulting"))
 			{
 				message.addReceiver(new AID("consulting", AID.ISLOCALNAME)); 
-				message.setContent("ID@" + String.valueOf(id)+"#Service@"+"ConsultingRoom");
+				message.setContent("ID:" + String.valueOf(id)+",Service:"+"ConsultingRoom");
 			}
 
-			if(map.get("Service").equals("Nursery"))
+			if(map.get("service").equals("Nursery"))
 			{
 				message.addReceiver(new AID("nursery", AID.ISLOCALNAME));
-				message.setContent("ID@" + String.valueOf(id)+"#Service@"+"NurseryRoom");
+				message.setContent("ID:" + String.valueOf(id)+",Service:"+"NurseryRoom");
 			}
 
-			if(map.get("Service").equals("Visitor"))
+			if(map.get("service").equals("Visitor"))
 			{
-				// TODO
-				// get status of patient X from database created bu assis
-				// input : name of patient
-				// output : status
-				String status = "ROOM:12"; // Or "Impossible:Reason"
-				message.addReceiver(new AID("ward", AID.ISLOCALNAME));
+				// GET ID FROM patients 
+				
+				int idpatient =-1;
+				// SQL>>   SELECT id,name FROM patients WHERE name="?"
+
+				String sql = "SELECT id,name FROM patients WHERE name = ?";
+				try {
+		            PreparedStatement st = myconnection.prepareStatement(sql);
+		            st.setString(1, map.get("name2"));
+		            myresultset = st.executeQuery();
+		            if (myresultset.next()) {
+		                 idpatient = myresultset.getInt("id");
+		                 System.out.println("IDP="+idpatient);
+		            }
+
+
+					// GET room FROM ward
+					// SQL>> SELECT room FROM ward WHERE id=2
+					String room = "#";
+
+					mystatement = myconnection.createStatement();
+
+		            myresultset = mystatement.executeQuery("SELECT room FROM ward WHERE id="+idpatient);
+		            if (myresultset.next()) {
+		                room = myresultset.getString("room");
+		                System.out.println("ROOM="+room);
+		            }
+
+					message.setContent("id:"+id+",room:"+room);
+					// message.addReceiver(new AID("ward", AID.ISLOCALNAME));
+		        } 
+		        catch(Exception e) {
+			            System.out.println(e);
+			        }
+				
 			}
 
 

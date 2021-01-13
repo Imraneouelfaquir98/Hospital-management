@@ -79,7 +79,7 @@ public class Consulting extends Agent {
 				}
 			if (e.getSource() == tsub) { 
 
-				currentPatient = patients.peek();
+				currentPatient = patients.remove(); //patients.peek();
 				res.setText(currentPatient);
 
 				}

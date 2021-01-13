@@ -21,9 +21,9 @@ public class Reception extends Agent {
 		// Components of the Form 
 		private Container c; 
 		private JLabel title; 
-		private JLabel name; 
+		private JLabel name,name2; 
 		private JLabel cin; 
-		private JTextField tname,tcin; 
+		private JTextField tname,tcin,tname2; 
 		private JLabel mno; 
 		private JTextField tmno; 
 		private JLabel gender; 
@@ -97,6 +97,19 @@ public class Reception extends Agent {
 			tname.setSize(190, 20); 
 			tname.setLocation(200, 100); 
 			c.add(tname); 
+
+
+			name2 = new JLabel("Name2"); 
+			name2.setFont(new Font("Arial", Font.PLAIN, 20)); 
+			name2.setSize(100, 20); 
+			name.setLocation(100, 100); 
+			c.add(name2); 
+
+			tname2 = new JTextField(); 
+			tname2.setFont(new Font("Arial", Font.PLAIN, 15)); 
+			tname2.setSize(190, 20); 
+			tname2.setLocation(200, 50); 
+			c.add(tname2); 
 
 
 			cin = new JLabel("CIN"); 
@@ -263,13 +276,14 @@ public class Reception extends Agent {
 						+ "/" + (String)year.getSelectedItem() 
 						; 
 
-					String data = "Name@"+tname.getText()+
-								"#CIN@"+tcin.getText()+
-								"#Mobile@"+tmno.getText()+
-								"#Gender@"+gender+
-								"#DOB@"+dob+
-								"#Address@"+tadd.getText()+
-								"#Service@"+(String)cservice.getSelectedItem() ; 
+					String data = "name:"+tname.getText()+
+								",cin:"+tcin.getText()+
+								",mobile:"+tmno.getText()+
+								",gender:"+gender+
+								",dob:"+dob+
+								",address:"+tadd.getText()+
+								",service:"+(String)cservice.getSelectedItem()+
+								",email:hospital@ma.ma,name2:"+tname2.getText() ; 
 					tout.setText(data); 
 					tout.setEditable(false);
 
@@ -277,7 +291,7 @@ public class Reception extends Agent {
 
 					ACLMessage message = new ACLMessage(ACLMessage.INFORM);
 					message.addReceiver(new AID("server", AID.ISLOCALNAME));
-					System.out.println("Sending to Server ...");
+					System.out.println("Reception>>Sending to Server ...");
 					message.setContent(data);
 					send(message);
 
