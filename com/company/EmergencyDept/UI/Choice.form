@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.company.EmergencyDept.UI.ChoiceForm">
+  <grid id="27dc6" binding="panel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties>
+      <autoscrolls value="false"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <component id="51d82" class="javax.swing.JButton" binding="registerPatientButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <text value="Register Patient"/>
+        </properties>
+      </component>
+      <component id="fece6" class="javax.swing.JButton" binding="performTestsButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <text value="Perform Tests"/>
+        </properties>
+      </component>
+      <component id="66704" class="javax.swing.JButton" binding="scheduleSurgeryButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <text value="Schedule Surgery"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
