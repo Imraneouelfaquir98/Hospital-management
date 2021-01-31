@@ -13,7 +13,7 @@ public class BloodDonationContainer {
 		ProfileImpl profileImpl = new ProfileImpl();
 		profileImpl.setParameter(ProfileImpl.MAIN_HOST, "localhost");
 		AgentContainer container = runtime.createAgentContainer(profileImpl);
-		AgentController agentController = container.createNewAgent("Blood Donation Agent","agents.BloodDonationAgent", new Object[] {});
+		AgentController agentController = container.createNewAgent("BloodDonation","agents.BloodDonationAgent", new Object[] {});
 		agentController.start();
 	}
 }

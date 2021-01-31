@@ -9,7 +9,6 @@ import jade.wrapper.ControllerException;
 public class MorgueContainer {
 
 	public static void main(String[] args) throws ControllerException{
-		// TODO Auto-generated method stub
 		Runtime runtime = Runtime.instance();
 		ProfileImpl profileImpl = new ProfileImpl();
 		profileImpl.setParameter(ProfileImpl.MAIN_HOST, "localhost");

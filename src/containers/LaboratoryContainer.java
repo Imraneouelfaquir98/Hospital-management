@@ -6,15 +6,14 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.ControllerException;
 
-public class CleanersContainer {
-	public static void main(String[] args) throws ControllerException {
+public class LaboratoryContainer {
+	public static void main(String[] args) throws ControllerException{
 		// TODO Auto-generated method stub
 		Runtime runtime = Runtime.instance();
 		ProfileImpl profileImpl = new ProfileImpl();
 		profileImpl.setParameter(ProfileImpl.MAIN_HOST, "localhost");
 		AgentContainer container = runtime.createAgentContainer(profileImpl);
-		AgentController agentController = container.createNewAgent("Cleaners Agent","agents.CleanersAgent", new Object[] {});
+		AgentController agentController = container.createNewAgent("Laboratory","agents.LaboratoryAgent", new Object[] {});
 		agentController.start();
 	}
-
 }

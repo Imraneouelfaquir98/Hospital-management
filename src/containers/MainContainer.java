@@ -7,8 +7,7 @@ import jade.wrapper.ControllerException;
 
 public class MainContainer {
 
-	public static void main(String[] args) throws ControllerException{
-		// TODO Auto-generated method stub
+	public static void main(String[] args) throws ControllerException {
 		Runtime runtime = Runtime.instance();
 		ProfileImpl profileImpl = new ProfileImpl();
 		profileImpl.setParameter(ProfileImpl.GUI, "true");
