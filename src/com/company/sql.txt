@@ -1,0 +1,54 @@
+CREATE DATABASE ok;
+use ok;
+
+create table patients (
+  id int,
+  name varchar(32),
+  cin varchar(32),
+  mobile varchar(32) ,
+  gender varchar(32),
+  dob varchar(32),
+  service varchar(32) ,
+  email varchar(32),
+  address varchar(100),
+  date_created timestamp default now()
+);
+
+
+create table visitors (
+  id int,
+  name varchar(32),
+  cin varchar(32),
+  mobile varchar(32) ,
+  gender varchar(32),
+  dob varchar(32),
+  service varchar(32) ,
+  email varchar(32),
+  address varchar(100),
+  name2 varchar(100),
+  date_created timestamp default now()
+);
+
+
+create table visitors (
+  id int,
+  name varchar(32),
+  cin varchar(32),
+  mobile varchar(32) ,
+  gender varchar(32),
+  dob varchar(32),
+  service varchar(32) ,
+  email varchar(32),
+  address varchar(100),
+  name2 varchar(100),
+  date_created timestamp default now()
+);
+
+
+create table agents (
+  departement varchar(50),
+  username varchar(50),
+  password varchar(50)
+);
+
+
