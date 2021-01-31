@@ -83,16 +83,15 @@ public class BloodDonationAgent extends Agent{
 					}
 					
 					else if (msg.getOntology().equals("Laboratory")) {
-						Vector row = new Vector();
-						try { 
-							row = (Vector) msg.getContentObject();
+						Vector<String> row = new Vector<String>();
+						try {
+							row = (Vector<String>)msg.getContentObject();
 						}catch(UnreadableException e){}
-//						System.out.println(row);
+						System.out.println(row);
 						model = (DefaultTableModel) frame.jTable1.getModel();
 						
 						for(int i=0; i < model.getRowCount(); i++) {
-							String str = (String)row.get(0);
-							if(model.getValueAt(i,0).equals(str)) {
+							if(model.getValueAt(i,0).equals(row.get(0))) {
 								model.setValueAt((String)row.get(1), i, 2);
 								break;
 							}

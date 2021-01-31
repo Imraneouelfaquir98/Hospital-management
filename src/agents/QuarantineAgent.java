@@ -1,5 +1,6 @@
 package agents;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
@@ -16,7 +17,8 @@ public class QuarantineAgent extends Agent{
 	public int TotalQuarantined      = 0;
 	public int RecoveredCases        = 0;
 	public int VaccinedCases         = 0;
-	public static int CurrentQuarantined    = 0;
+	public static int CurrentQuarantined    =  0;
+	public static int waitingVaccin         =  0;
 	public static int EmptyQuarantinePlaces = 100;
 	
 	
@@ -55,7 +57,7 @@ public class QuarantineAgent extends Agent{
 							reply.setContent("No, there is no empty place.");
 						send(reply);
 					}
-					else {
+					else if (msg.getSender().getName().equals("CoronaConsultingAgent@192.168.43.96:1099/JADE")){
 						
 						EmptyQuarantinePlaces--;
 						TotalQuarantined++;
@@ -69,10 +71,16 @@ public class QuarantineAgent extends Agent{
 						row.add(msg.getContent());
 						
 						Calendar myCal = Calendar.getInstance();
-						row.add(new SimpleDateFormat("dd/MM/yy").format(myCal.getTime()));
+						row.add(new SimpleDateFormat("dd/MM/yy").format(Calendar.getInstance().getTime()));
 						myCal.add(Calendar.DAY_OF_MONTH, 15);
 						row.add(new SimpleDateFormat("dd/MM/yy").format(myCal.getTime()));
 						row.add("Not Yet");
+						
+						ACLMessage vaccinAsk = new ACLMessage( ACLMessage.INFORM );
+						vaccinAsk.addReceiver(new AID("Vaccination Agent", AID.ISLOCALNAME));
+						vaccinAsk.setContent(msg.getContent());
+					    send(vaccinAsk);
+						
 						
 						DefaultTableModel model = (DefaultTableModel) quarantineFrame.QuarantinedTable.getModel();
 						model.addRow(row);
@@ -84,6 +92,17 @@ public class QuarantineAgent extends Agent{
 					block();
 			}
 		});
+		
+//		parallelBehaviour.addSubBehaviour(new TickerBehaviour(this,1000) { 
+//			public void onTick() {
+//				if(waitingVaccin>0) {
+//					ACLMessage msg = new ACLMessage( ACLMessage.INFORM );
+//				    msg.addReceiver(new AID("QuarantineAgent", AID.ISLOCALNAME));
+//				    msg.setContent("Request a Vaccin");
+//				    send(msg);
+//				}
+//			}
+//		});
 	}
 	
 	protected void beforeMove() {

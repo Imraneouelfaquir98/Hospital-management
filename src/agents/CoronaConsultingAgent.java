@@ -22,11 +22,13 @@ public class CoronaConsultingAgent extends Agent{
 	public int quarantined       = 0;
 	public int notYetQuarantined = 0;
 	
-	public DefaultTableModel model;
-	
 	public static int counter = 0;
+	public DefaultTableModel model1, model2;
 	
 	protected void setup() {
+		
+		model1 = (DefaultTableModel) consultFrame.ConsultingCovidTable.getModel();
+		model2 = (DefaultTableModel) consultFrame.QuarantedTable.getModel();
 		
 		consultFrame.setVisible(true);
 		
@@ -37,7 +39,7 @@ public class CoronaConsultingAgent extends Agent{
 			public void action() {
 				ACLMessage msg = receive();
 				if( msg != null) {
-					model = (DefaultTableModel) consultFrame.ConsultingCovidTable.getModel();
+					// model = (DefaultTableModel) consultFrame.ConsultingCovidTable.getModel();
 					if(msg.getSender().getName().equals("Reception Agent@192.168.43.96:1099/JADE")){
 						Vector<String> row = new Vector<String>();			
 						try {
@@ -60,7 +62,7 @@ public class CoronaConsultingAgent extends Agent{
 				    		consultFrame.NegativeTestLabel.setText(Integer.toString(negativeTest));
 				    	}
 				    	totalConsulting++;
-				    	model.addRow(row);
+				    	model1.addRow(row);
 				    	
 				    	consultFrame.TotalConsultingLabel.setText(Integer.toString(totalConsulting));
 					}
@@ -69,18 +71,17 @@ public class CoronaConsultingAgent extends Agent{
 							if(notYetQuarantined>0) {
 								notYetQuarantined--;
 	
-								for(int i=0; i < model.getRowCount(); i++) {
-									if(model.getValueAt(i,2).equals("Positive")) {
+								for(int i=0; i < model1.getRowCount(); i++) {
+									if(model1.getValueAt(i,2).equals("Positive")) {
 										ACLMessage reply = msg.createReply();
-										reply.setContent((String)model.getValueAt(i,0));
-										
-										
+										reply.setContent((String)model1.getValueAt(i,0));
+
 										Vector<String> row = new Vector<String>();
-										row.add((String)model.getValueAt(i,0));
+										row.add((String)model1.getValueAt(i,0));
 										row.add(new SimpleDateFormat("dd/MM/yy").format(new Date())+" "+ new SimpleDateFormat("h:mm a").format(new Date()));
-										model = (DefaultTableModel) consultFrame.QuarantedTable.getModel();
-										model.addRow(row);;
-										counter++;
+										
+										model2.addRow(row);
+										model1.removeRow(0);
 										send(reply);
 										break;
 									}

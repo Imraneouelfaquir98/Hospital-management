@@ -5,8 +5,10 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Queue;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 public class WaitRequestBehavior extends CyclicBehaviour {
 
@@ -40,6 +42,15 @@ public class WaitRequestBehavior extends CyclicBehaviour {
                 	result.add("Positive");
                 else
                 	result.add("Negative");
+                try {
+                	reply.setContentObject(result);
+	            }catch(IOException e){}
+                try {
+					TimeUnit.SECONDS.sleep(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 myAgent.send(reply);
         	}
         	

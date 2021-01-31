@@ -16,7 +16,7 @@ public class VaccinationRoomContainer {
 		ProfileImpl profileImpl = new ProfileImpl();
 		profileImpl.setParameter(ProfileImpl.MAIN_HOST, "localhost");
 		AgentContainer container = runtime.createAgentContainer(profileImpl);
-		AgentController agentController = container.createNewAgent("Vaccination Room Agent","agents.VaccinationRoomAgent", new Object[] {});
+		AgentController agentController = container.createNewAgent("Vaccination Agent","agents.VaccinationRoomAgent", new Object[] {});
 		agentController.start();
 	}
 }
