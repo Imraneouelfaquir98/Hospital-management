@@ -84,7 +84,7 @@ public class BloodDonationAgent extends Agent{
 					
 					else if (msg.getOntology().equals("Laboratory")) {
 						Vector row = new Vector();
-						try {
+						try { 
 							row = (Vector) msg.getContentObject();
 						}catch(UnreadableException e){}
 //						System.out.println(row);
