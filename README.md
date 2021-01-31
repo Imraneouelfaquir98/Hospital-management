@@ -3,7 +3,7 @@
 ```powershell
   cp java/*.java .
 
-	javac -cp jade.jar:json.jar *.java
+	javac -cp jade.jar:json.jar agents/*.java frames/*.java
 
 	java -cp mysql-connector.jar:jade.jar:json.jar:classes:. jade.Boot -agents "server:AdministrateurAgent;reception:ReceptionAgent;consulting:ConsultingAgent;nurseryAgent:NurseryAgent"
 
