@@ -1,3 +1,5 @@
+package agents;
+
 
 import jade.core.AID;
 import jade.core.Agent;

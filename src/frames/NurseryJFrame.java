@@ -10,7 +10,7 @@
  * @author abdo
  */
 
-
+package frames;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.FSMBehaviour;

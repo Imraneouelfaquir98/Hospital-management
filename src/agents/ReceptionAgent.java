@@ -4,30 +4,37 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
-import frames.ReceptionJFrame;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.*;
+import jade.domain.FIPAException;
+import jade.core.*;
 import java.io.IOException;
 import java.util.Vector;
+
+import org.json.*;
 
 
 public class ReceptionAgent extends Agent {
 
-	ReceptionJFrame jFrame = new ReceptionJFrame();
+	ReceptionJFrame jFrame = new ReceptionJFrame(this);
 	public static int counter = 0;
+	private AID[] aids;
+	
 	protected void setup() {
 	
 		jFrame.setVisible(true);
 		// add listener
-		jFrame.addMessageHandler(new ReceptionJFrame.MessageHandler() {
-		    public void handleMessage(String s){
-				System.out.println("RECEPTION"+s);
+		// jFrame.addMessageHandler(new ReceptionJFrame.MessageHandler() {
+		//     public void handleMessage(ACLMessage message){
+		// 		System.out.println("RECEPTION>>"+message.getContent());
 				
-				ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-				message.addReceiver(new AID("server", AID.ISLOCALNAME));
-				System.out.println("Reception>>Sending to Server ...");
-				message.setContent(s);
-				send(message);
-		    }
-		});
+			
+		// 		send(message);
+
+
+
+		//     }
+		// });
 		
 		System.out.println("-----------------------------------------");
 		System.out.println("----------------Reception----------------");
@@ -42,23 +49,26 @@ public class ReceptionAgent extends Agent {
 		
 		addBehaviour(agent_beh);
 		
-		// Imrane part
+		
 		ParallelBehaviour parallelBehaviour = new ParallelBehaviour();
 		addBehaviour(parallelBehaviour);
 		
 		parallelBehaviour.addSubBehaviour(new CyclicBehaviour() { 
 			public void action() {
-				
+
+
 				if(jFrame.jButton1.getModel().isPressed()) {
 					jFrame.jButton1.getModel().setPressed(false);
-					System.out.println("Reception: start action ");
+
+					System.out.println("Reception: Send Person info to Database ");
+					jFrame.toDataBase();
 					
 					String item = (String) jFrame.jComboBox4.getSelectedItem();
 					
 					if(item.equals("Blood Donation")) {
 						ACLMessage msg = new ACLMessage( ACLMessage.INFORM );
 					    msg.addReceiver(new AID("BloodDonation", AID.ISLOCALNAME));
-					    Vector<String> row = new Vector<String>();
+					    Vector row = new Vector();
 			            row.add("ID_Person" + counter); 
 			            counter++;
 			            try {
@@ -66,32 +76,115 @@ public class ReceptionAgent extends Agent {
 			            }catch(IOException e){}
 					    send(msg);
 					}
-					
-					else if(item.equals("Consulting Coronavirus")){
-						ACLMessage msg = new ACLMessage( ACLMessage.INFORM );
-					    msg.addReceiver(new AID("CoronaConsultingAgent", AID.ISLOCALNAME));
-					    Vector<String> row = new Vector<String>();
-			            row.add("ID_Person" + counter); 
-			            counter++;
-			            try {
-			            	msg.setContentObject(row);
-			            }catch(IOException e){}
-					    send(msg);
-					}
-					
 					else if(item.equals("Consulting")){
-						//TODO 
+						
+						JSONObject jo = new JSONObject();
+
+						ACLMessage msg = new ACLMessage( ACLMessage.INFORM );
+					    msg.addReceiver(new AID("consulting", AID.ISLOCALNAME));
+					    
+					    msg.setOntology("reception");
+			            
+			            jo.put("idPatient",jFrame.jTextField2.getText());
+			            jo.put("name",jFrame.jTextField1.getText());
+
+			            msg.setContent(jo.toString());
+			            
+					    send(msg);
+
 					}
 					
 					else if(item.equals("Visitor")){
-						//TODO 
-					}
+
+						JSONObject jo = new JSONObject();
+            
+
+				        DFAgentDescription template = new DFAgentDescription();
+				        ServiceDescription sd = new ServiceDescription();
+
+				        sd.setName("Ward");
+
+				        template.addServices(sd);
+				        try {
+				        DFAgentDescription[] result = DFService.search(myAgent, template);
+				        aids = new AID[result.length];
+				        for (int i = 0; i < result.length; ++i) {
+				        aids[i] = result[i].getName();
+
+
+				        ACLMessage msg = new ACLMessage( ACLMessage.INFORM );
+				        msg.addReceiver(aids[i]);
+				        msg.setOntology("searching");
+
+				        jo.put("idPatient",jFrame.jTextField9.getText());
+				        jo.put("idVisitor",jFrame.jTextField2.getText());
+
+
+				        msg.setContent(jo.toString());
+				        send(msg);
+
+				        }
+				        }
+				        catch (FIPAException fe) {
+				        fe.printStackTrace();
+				        }
+
+
+				        }
+       
+				else if(item.equals("Nursery")){
+
+						JSONObject jo = new JSONObject();
+            	
+				        ACLMessage msg = new ACLMessage( ACLMessage.INFORM );
+				        msg.addReceiver(new AID("nursery", AID.ISLOCALNAME));
+				        msg.setOntology("newPatient");
+
+				        jo.put("idPatient",jFrame.jTextField9.getText());
+				        jo.put("name",jFrame.jTextField1.getText());
+
+				        msg.setContent(jo.toString());
+				        send(msg);
+
+				        // DFAgentDescription template = new DFAgentDescription();
+				        // ServiceDescription sd = new ServiceDescription();
+
+				        // sd.setName("Nursery");
+
+				        // template.addServices(sd);
+				        // try {
+				        // DFAgentDescription[] result = DFService.search(myAgent, template);
+				        // aids = new AID[result.length];
+				        // for (int i = 0; i < result.length; ++i) {
+				        // aids[i] = result[i].getName();
+
+
+				        // ACLMessage msg = new ACLMessage( ACLMessage.INFORM );
+				        // msg.addReceiver(aids[i]);
+				        // msg.setOntology("newPatient");
+
+				        // jo.put("idPatient",jFrame.jTextField9.getText());
+				        // jo.put("name",jFrame.jTextField1.getText());
+
+				        // msg.setContent(jo.toString());
+				        // send(msg);
+
+				        // }
+				        // }
+				        // catch (FIPAException fe) {
+				        // fe.printStackTrace();
+				        // }
+
+
+				        }
+        
+
+			
 					
 				}
 
 			}
 		});
-		// End Imrane part
 	}
 	
 	
@@ -112,10 +205,53 @@ public class ReceptionAgent extends Agent {
 		@Override
 		public void action() {
 
-			System.out.println("Reception: start action ");
-			ACLMessage messageRecu = receive();
-			System.out.println(messageRecu.getContent());
+			ACLMessage messageRecu = receive();	
+			try{
+
+			String s = messageRecu.getContent();
+			System.out.println("Reception: Recieve "+s);
+			JSONObject jo = new JSONObject(s);
+			String ontology = messageRecu.getOntology();
+			if(ontology.equals("connexion"))
+			{
+				String r = (String)jo.get("connexion");
+				if(r.equals("ok"))
+				{
+					jFrame.connexion(true);
+				}else
+				{
+					jFrame.connexion(false);
+				}
+			}
+			else if (ontology.equals("Admin"))
+				{
+
+					jFrame.jLabel11.setText("ADMIN~ " +jo.get("message").toString());
+
+				}
+			else if (ontology.equals("consulting"))
+				{
+
+					jFrame.jLabel11.setText("Laboratory~ Ordre " +jo.get("ordre").toString());
+
+				}
+			else if (ontology.equals("searching"))
+				{
+
+					jFrame.jLabel11.setText("Ward~ Room " +jo.get("room").toString());
+
+				}
+			else if (ontology.equals("bloodDonation"))
+				{
+
+					jFrame.jLabel11.setText("BloodDonation~ Ordre " +jo.get("ordre").toString());
+
+				}
 			// jFrame.res.setText(messageRecu.getContent());
+			} catch(Exception e)
+			{
+
+			}
 
 		}
 		public int onEnd() {
